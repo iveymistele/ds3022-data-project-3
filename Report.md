@@ -19,8 +19,23 @@ Offer a brief analysis of the data with your findings. Keep it to one brief, cle
 
 ## Plot / Visualization
 
-Include at least one compelling plot or visualization of your work. Add images in your subdirectory and then display them using markdown in your README.md file.
+### total commits per package
+![hourly commits](./visualizations/commit_counts_per_package.png)
+
+### time charts
+![hourly commits](./visualizations/hourly_commits.png)
+![daily commits](./visualizations/daily_commits.png)
+![weekly commits](./visualizations/weekly_commits.png)
+![monthly commits](./visualizations/monthly_commits.png)
+
+### percent changes in packages
+
+#### three month periods
+![monthly commits](./visualizations/threemo_perc_change.png)
+#### six month periods
+![monthly commits](./visualizations/sixmo_perc_change.png)
+
+
 
 ## GitHub Repository
-
-https://github.com/
+https://github.com/jac7az/data-project-3

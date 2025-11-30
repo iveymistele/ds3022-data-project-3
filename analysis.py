@@ -5,6 +5,7 @@ import duckdb
 import pandas as pd
 import matplotlib.pyplot as plt
 import logging
+import numpy as np
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
                     filename='analysis.log')
@@ -29,6 +30,9 @@ def analyze_commits():
 
         plt.figure(figsize=(10,6))
         plt.bar(commit_counts_df['package'], commit_counts_df['package_count'], color='skyblue')
+        plt.gca().spines['right'].set_visible(False)
+        plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['left'].set_visible(False)
         plt.xlabel('Package')
         plt.ylabel('Number of Commits')
         plt.title('Number of Commits per Package')
@@ -97,7 +101,7 @@ def visualize_hourly_commits():
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
 
-        plt.title("Commits per Hour for pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43)
+        plt.title("Commits per Hour for scikit-learn, pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43, fontsize=10.4)
         # plt.text(5.75, 3130, "pandas,", size=12, color='#274c77')
         # plt.text(9.5, 3130, "matplotlib,", size=12, color='#d62828')
         # plt.text(14.5, 3130, "plotly,", size=12, color='#f77f00')
@@ -162,7 +166,7 @@ def visualize_daily_commits():
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
 
-        plt.title("Commits per Day for pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43)
+        plt.title("Commits per Day for scikit-learn, pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43, fontsize=10.4)
         # plt.text(5.75, 1, "pandas,", size=12, color='#274c77')
         # plt.text(9.5, 1, "matplotlib,", size=12, color='#d62828')
         # plt.text(14.5, 1, "plotly,", size=12, color='#f77f00')
@@ -227,7 +231,7 @@ def visualize_weekly_commits():
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
 
-        plt.title("Commits per Week for pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43)
+        plt.title("Commits per Week for scikit-learn, pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43, fontsize=10.4)
         # plt.text(5.75, 1, "pandas,", size=12, color='#274c77')
         # plt.text(9.5, 1, "matplotlib,", size=12, color='#d62828')
         # plt.text(14.5, 1, "plotly,", size=12, color='#f77f00')
@@ -292,7 +296,7 @@ def visualize_monthly_commits():
         plt.gca().spines['top'].set_visible(False)
         plt.gca().spines['right'].set_visible(False)
 
-        plt.title("Commits per Month for pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43)
+        plt.title("Commits per Month for scikit-learn, pandas, matplotlib, plotly, and numpy", y=1.05, x=0.43, fontsize=10.4)
         # plt.text(5.75, 1, "pandas,", size=12, color='#274c77')
         # plt.text(9.5, 1, "matplotlib,", size=12, color='#d62828')
         # plt.text(14.5, 1, "plotly,", size=12, color='#f77f00')
@@ -352,6 +356,7 @@ def get_last1000_commit_users(package):
 
 
 def compare_trends(package):
+    result = ()
     con=duckdb.connect(database="packages.duckdb", read_only=True)
     logger.info(f"Connect to duckdb for comparing commit trends in past 3, 6 and earlier months")
 
@@ -378,15 +383,58 @@ def compare_trends(package):
                                          AND date < CURRENT_DATE - INTERVAL 6 MONTH
                                          AND date >= CURRENT_DATE - INTERVAL 12 MONTH;""", [package],).fetchone()[0]
         
-        print(f"{package}")
-        print(f"PRE three month period: {pre_threemo_trend},\nlast three months: {threemo_trend}")
-        print(f"    - percent change for three months: {(((threemo_trend - pre_threemo_trend)/pre_threemo_trend) * 100):.2f}%")
-        print(f"PRE six month period: {pre_sixmo_trend},\nlast six months: {sixmo_trend}")
-        print(f"    - percent change for three months: {(((sixmo_trend - pre_sixmo_trend)/pre_sixmo_trend) * 100):.2f}%")
+        threemo_perc_change = ((threemo_trend - pre_threemo_trend)/pre_threemo_trend) * 100
+        sixmo_perc_change = ((sixmo_trend - pre_sixmo_trend)/pre_sixmo_trend) * 100
+        # print(f"{package}")
+        # print(f"PRE three month period: {pre_threemo_trend},\nlast three months: {threemo_trend}")
+        # print(f"    - percent change for three months: {(threemo_perc_change):.2f}%")
+        # print(f"PRE six month period: {pre_sixmo_trend},\nlast six months: {sixmo_trend}")
+        # print(f"    - percent change for three months: {(sixmo_perc_change):.2f}%")
 
+        result = (threemo_perc_change, sixmo_perc_change)
+        return result
         
     except Exception as e:
         logger.error(f"An error occurred trying to compare trends: {e}")
+
+
+def plot_separate_percent_changes(dict_perc_change):
+    packages = list(dict_perc_change.keys())
+    three_month = [dict_perc_change[p][0] for p in packages]
+    six_month = [dict_perc_change[p][1] for p in packages]
+
+    #3 MONTH PLOT
+    plt.clf()
+    # plt.figure(figsize=(10, 5))
+    y = np.arange(len(packages))
+    colors = ['#2a9d8f' if v > 0 else '#e76f51' for v in three_month]
+
+    plt.barh(y, three_month, color=colors)
+    plt.axvline(0, color='black', linewidth=1)
+    plt.yticks(y, packages)
+    plt.xlabel("Percent Change (%)")
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.title("Percent Change in Commits (Last 3 Months vs Previous 3 Months)", x = 0.4)
+    plt.tight_layout()
+    plt.savefig("./visualizations/threemo_perc_change.png")
+
+    #6 MONTH PLOT
+    plt.clf()
+    # plt.figure(figsize=(10, 5))
+    colors = ['#2a9d8f' if v > 0 else '#e76f51' for v in six_month]
+
+    plt.barh(y, six_month, color=colors)
+    plt.axvline(0, color='black', linewidth=1)
+    plt.yticks(y, packages)
+    plt.xlabel("Percent Change (%)")
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['right'].set_visible(False)
+    plt.title("Percent Change in Commits (Last 6 Months vs Previous 6 Months)", x = 0.4)
+    plt.tight_layout()
+    plt.savefig("./visualizations/sixmo_perc_change.png")
 
 
 
@@ -394,7 +442,7 @@ if __name__ == "__main__":
     packages = ["scikit-learn", "pandas", "matplotlib", "plotly", "numpy"]
 
     # analyze_commits()
-    # print("\n")
+    # # print("\n")
     
     # visualize_hourly_commits()
     # print("hourly visualization in hourly_commits.png")
@@ -409,7 +457,11 @@ if __name__ == "__main__":
         get_last1000_commit_users(package)
     print("\n")
 
-    # for package in packages:
-    #     compare_trends(package)
-        # print("\n")
+    dict_perc_change = {}
+    for package in packages:
+        result = compare_trends(package)
+        dict_perc_change[package] = result
+        print("\n")
+    plot_separate_percent_changes(dict_perc_change)
+
     # print("\n")
