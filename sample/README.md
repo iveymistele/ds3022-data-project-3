@@ -45,4 +45,4 @@ Include at least one compelling plot or visualization of your work. Add images i
 
 ## GitHub Repository
 
-https://github.com/tcusick8/ds3022-data-project-3-tpg6hu
+https://github.com/tcusick8/alpaca_yfinance_DP3/tree/main
