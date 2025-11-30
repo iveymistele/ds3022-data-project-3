@@ -442,7 +442,7 @@ if __name__ == "__main__":
     packages = ["scikit-learn", "pandas", "matplotlib", "plotly", "numpy"]
 
     analyze_commits()
-    # print("\n")
+    print("\n")
     
     visualize_hourly_commits()
     print("hourly visualization in hourly_commits.png")
@@ -464,4 +464,4 @@ if __name__ == "__main__":
         print("\n")
     plot_separate_percent_changes(dict_perc_change)
 
-    # print("\n")
+    print("\n")
