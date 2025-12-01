@@ -12,7 +12,7 @@ For our project we used the Alpaca trading API. The API provided us with live st
 - For our tools, we used Kafka to produce and consume the data from the live streaming API by filtering out which companies we would keep, and then writing out the trades to a table in DuckDB to perform our analysis. 
 
 ### Analysis
-Our analysis generates three plots and provides useful insights from the data we collected from our stream. The first plot shows the density of trading activity throughout the trading day; as you can see, they all seem to follow a similar pattern: a large spike shortly after the open, a steady decline, and another big spike right before market close. The second plot is a bar chart with the volatility of each security, which we got by calculating the standard deviation over the given period; in this case, it was two days. For the final plot, we wanted to know what the ratio of returns to volatility was, and arrived at that simply by dividing the daily relative change in stock price by the volatility calculated previously. Finally, we printed the daily high price, low price, and median price for each name. These charts and insights could be useful to anyone who wants to compare different stocks and gain a better insight into daily volume, volatility, and risk. They can be used to analyze trends of good times of day to make trades and potentially generate greater profit. 
+Our analysis generates three plots and provides useful insights from the data we collected from our stream. The first plot shows the density of trading activity throughout the trading day; as you can see, they all seem to follow a similar pattern: a large spike shortly after the open, a steady decline, and another big spike right before market close. The second plot is a bar chart with the volatility of each security, which we got by calculating the standard deviation over the given period; in this case, it was two days. For the final plot, we wanted to know what the ratio of returns to volatility was, and arrived at that simply by dividing the daily relative change in stock price by the volatility calculated previously. Finally, we printed the daily high price, low price, and median price for each name. These charts and insights could be useful to anyone who wants to compare different stocks and gain a better insight into daily volume, volatility, and risk. They can be used to analyze trends of good times of day to make trades and potentially generate greater profit. Interestingly, all stocks follow a similar trend of trading activity by time of day, indicating that the market is more of a predictor of trading activity than individual stocks. There are clear spikes around 11:00 AM and 4:00 PM, right before the markets close. From the bar charts, we were surprised to see that although META was fairly volatile, it still offered a good return ratio, indicating that it is a good stock to invest in in the short term.
 
 
 ### Github repo link
@@ -23,6 +23,8 @@ Our analysis generates three plots and provides useful insights from the data we
 ![Volatility Chart](volatility_bar_chart.png)
 ![Trade Activity by Time](trade_activity_density.png)
 ![Statistics](analysis_statistics.png) 
+
+ 
  
 
 
